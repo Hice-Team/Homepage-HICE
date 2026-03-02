@@ -1,214 +1,239 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, Globe, Moon, Sun, X } from 'lucide-react';
+import { useState } from 'react';
+import { useGlobal } from '@/components/providers/GlobalProvider';
+import { ArrowRight, Target, Users, Shield, Activity, Cpu } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
-export default function Header() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [lang, setLang] = useState<'KOR' | 'ENG'>('KOR');
-  const [activeMenu, setActiveMenu] = useState<number | null>(null);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+export default function HiceLandingPage() {
+  
+  const { isDarkMode, setIsDarkMode, lang, setLang } = useGlobal();
 
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsSearchOpen(false);
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
+  const themeClass = isDarkMode ? 'bg-black text-white' : 'bg-[#FAFAFA] text-black';
+  const cardBgClass = isDarkMode ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-700' : 'bg-white border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100';
 
-  const themeClass = isDarkMode ? 'bg-black text-white' : 'bg-white text-black';
-
-  // 다국어 텍스트 데이터 맵
-  const t = {
-    searchPlaceholder: lang === 'KOR' ? '무엇이 궁금하신가요?' : 'What are you looking for?',
-    trending: lang === 'KOR' ? '인기 검색어' : 'Trending',
+  // Animation variants
+  const fadeIn: any = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
-  const menuItems = [
-    {
-      KOR: '소개', ENG: 'About',
-      subGroups: [
-        {
-          title: { KOR: '회사 개요', ENG: 'OVERVIEW' },
-          list: [
-            { KOR: 'Our Story', ENG: 'Our Story' }, // 영문 고정 선호
-            { KOR: '비전 및 미션', ENG: 'Vision & Mission' },
-            { KOR: '팀 소개', ENG: 'Meet the Team' },
-            { KOR: 'Way of Working', ENG: 'Way of Working' }, // 관용구 유지
-            { KOR: '핵심 가치', ENG: 'Values' },
-            { KOR: 'Our Impact', ENG: 'Our Impact' } // 영문 고정 선호
-          ]
-        }
-      ]
-    },
-    {
-      KOR: '기술 및 서비스', ENG: 'Tech & Service',
-      subGroups: [
-        {
-          title: { KOR: '서비스', ENG: 'SERVICES' },
-          list: [
-            { KOR: 'HICE OpenApp', ENG: 'HICE OpenApp' }, // 상표권 영문 고정
-            { KOR: 'Planet', ENG: 'Planet' },
-            { KOR: 'Croffle', ENG: 'Croffle' },
-            { KOR: 'ExoKRUS', ENG: 'ExoKRUS' },
-            { KOR: '준비 중인 프로젝트', ENG: 'Upcoming Projects' }
-          ]
-        },
-        {
-          title: { KOR: '연구', ENG: 'RESEARCH' },
-          list: [
-            { KOR: 'HICE AI', ENG: 'HICE AI' },
-            { KOR: 'HICE Notebooks', ENG: 'HICE Notebooks' },
-            { KOR: 'Next (HICE)', ENG: 'Next (HICE)' },
-            { KOR: '피드백', ENG: 'Feedback' },
-            { KOR: 'GitHub', ENG: 'GitHub' },
-            { KOR: 'HuggingFace', ENG: 'HuggingFace' }
-          ]
-        }
-      ]
-    },
-    {
-      KOR: '비즈니스', ENG: 'Business',
-      subGroups: [
-        {
-          title: { KOR: '투자', ENG: 'INVESTMENT' },
-          list: [
-            { KOR: 'About HICE IR', ENG: 'About HICE IR' },
-            { KOR: '투자자 업데이트', ENG: 'Investor Updates' },
-            { KOR: '파트너십 문의', ENG: 'Partner Inquiry' },
-            { KOR: 'IR 자료실', ENG: 'Decks' },
-            { KOR: '자주 묻는 질문', ENG: 'FAQ' }
-          ]
-        },
-        {
-          title: { KOR: '채용', ENG: 'CAREERS' },
-          list: [
-            { KOR: '인재상', ENG: 'Team Fit' },
-            { KOR: 'HICE의 문화', ENG: 'Why HICE' },
-            { KOR: '채용 중인 공고', ENG: 'Roles' },
-            { KOR: '채용 절차', ENG: 'Join Process' },
-            { KOR: '간편 지원', ENG: 'Quick Apply' },
-            { KOR: '자주 묻는 질문', ENG: 'FAQ' }
-          ]
-        }
-      ]
-    },
-    {
-      KOR: '소식', ENG: 'News',
-      subGroups: [
-        {
-          title: { KOR: '미디어', ENG: 'MEDIA' },
-          list: [
-            { KOR: '보도자료', ENG: 'Press Releases' },
-            { KOR: '공지사항', ENG: 'Announcements' },
-            { KOR: '팀 업데이트', ENG: 'Team Updates' },
-            { KOR: '수상 실적', ENG: 'Awards' },
-            { KOR: '뉴스레터 구독', ENG: 'Newsletter' }
-          ]
-        },
-        {
-          title: { KOR: '인사이트', ENG: 'INSIGHTS' },
-          list: [
-            { KOR: 'Tech Blog', ENG: 'Tech Blog' }, // 영문 고정 선호
-            { KOR: '월간 리포트', ENG: 'Monthly Report' },
-            { KOR: '이벤트', ENG: 'Events' },
-            { KOR: '매뉴얼', ENG: 'Guides' }
-          ]
-        }
-      ]
-    },
-  ];
+  const staggerContainer: any = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+
+  const t = {
+    slogan1: lang === 'KOR' ? '사람에 공감합니다,' : 'Empathizing with people,',
+    slogan2: lang === 'KOR' ? '사람과 기술을 연결하다.' : 'Connecting people and technology.',
+    intro: lang === 'KOR'
+      ? 'HICE는 인공지능 연구부터 일상에 녹아드는 애플리케이션 서비스까지, 기술의 온기를 통해 사람들의 삶을 긍정적으로 변화시키는 스타트업입니다.'
+      : 'HICE is a startup that positively changes people\'s lives through the warmth of technology, from AI research to everyday application services.',
+    techTitle: lang === 'KOR' ? '우리의 기술과 서비스' : 'Our Tech & Services',
+    stats: [
+      { num: "1M+", label: lang === 'KOR' ? '생성된 AI 모델 방어' : 'AI Models Secured', icon: Shield },
+      { num: "50+", label: lang === 'KOR' ? '글로벌 파트너스' : 'Global Partners', icon: Users },
+      { num: "99.9%", label: lang === 'KOR' ? '서버 안정성' : 'Server Uptime', icon: Activity },
+      { num: "24/7", label: lang === 'KOR' ? '지속적인 연구개발' : 'Continuous R&D', icon: Cpu },
+    ],
+  };
 
   return (
-    <>
-      <header className={`relative w-full border-b transition-colors duration-300 z-50 ${themeClass} ${isDarkMode ? 'border-zinc-800' : 'border-gray-100'}`}>
-        <div className="flex justify-between items-center px-12 py-6 max-w-7xl mx-auto">
-          {/* 브랜드명은 영문 고정 */}
-          <h2 className="font-bold text-2xl tracking-tighter cursor-pointer"><a href='/'>HICE</a></h2>
+    <div className={`min-h-screen font-sans transition-colors duration-500 overflow-x-hidden ${themeClass}`}>
+      <Navbar
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
+        lang={lang}
+        setLang={setLang}
+      />
 
-          <nav className="relative">
-            <ul className="flex gap-1 text-[16px] font-bold items-center">
-              {menuItems.map((item, index) => (
-                <li key={item.ENG} className="py-1">
-                  <button
-                    onClick={() => setActiveMenu(activeMenu === index ? null : index)}
-                    className={`px-6 py-2.5 transition-all duration-200 rounded-full ${activeMenu === index ? (isDarkMode ? 'bg-white text-black' : 'bg-black text-white') : 'hover:opacity-60'}`}
-                  >
-                    {lang === 'KOR' ? item.KOR : item.ENG}
-                  </button>
-                </li>
-              ))}
-            </ul>
+      {/* Dynamic Background Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <motion.div
+          animate={{ x: [0, 50, 0], y: [0, 30, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-[20%] -right-[10%] w-[70vw] h-[70vw] rounded-full bg-blue-500/10 dark:bg-blue-600/5 blur-[120px]"
+        />
+        <motion.div
+          animate={{ x: [0, -40, 0], y: [0, 50, 0], scale: [1, 1.2, 1] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear", delay: 1 }}
+          className="absolute top-[40%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-purple-500/10 dark:bg-purple-600/5 blur-[100px]"
+        />
+      </div>
 
-            {activeMenu !== null && (
-              <div className="absolute left-0 right-0 top-full pt-[25px] animate-in fade-in slide-in-from-top-1 duration-200">
-                <div className={`w-full p-10 rounded-b-[32px] shadow-2xl border-x border-b ${isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'}`}>
-                  <div className="flex gap-16">
-                    {menuItems[activeMenu].subGroups.map((group, gIdx) => (
-                      <div key={gIdx} className="min-w-[140px]">
-                        {/* 서브그룹 타이틀 (INVESTMENT, CAREERS 등) */}
-                        <h4 className="text-[11px] text-gray-400 mb-6 font-bold tracking-widest uppercase">
-                          {lang === 'KOR' ? group.title.KOR : group.title.ENG}
-                        </h4>
+      {/* Main Content Area */}
+      <main className="relative z-10 pt-44 pb-32">
+        {/* Hero Section */}
+        <section className="max-w-[1400px] mx-auto px-6 md:px-12 py-10 md:py-20 flex flex-col items-center text-center">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="flex flex-col items-center"
+          >
+            <motion.div variants={fadeIn} className="mb-6 inline-block px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-bold tracking-wide">
+              {lang === 'KOR' ? '내일을 향한 끝없는 혁신' : 'Endless Innovation for Tomorrow'}
+            </motion.div>
 
-                        <ul className="space-y-3">
-                          {group.list.map((sub, sIdx) => (
-                            <li
-                              key={sIdx}
-                              className="text-[15px] font-bold hover:text-blue-500 cursor-pointer transition-colors"
-                            >
-                              {/* 리스트 아이템 한영 전환 */}
-                              {lang === 'KOR' ? sub.KOR : sub.ENG}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+            <motion.h1 variants={fadeIn} className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter leading-[1.05] mb-10">
+              {t.slogan1} <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+                {t.slogan2}
+              </span>
+            </motion.h1>
+
+            <motion.p variants={fadeIn} className={`text-xl md:text-2xl max-w-3xl leading-relaxed mb-12 ${isDarkMode ? 'text-zinc-400' : 'text-gray-500'}`}>
+              {t.intro}
+            </motion.p>
+
+            <motion.div variants={fadeIn} className="flex gap-4 flex-col sm:flex-row">
+              <a href="#services" className={`px-8 py-4 rounded-full font-bold text-lg transition-transform hover:scale-105 ${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'}`}>
+                {lang === 'KOR' ? '서비스 둘러보기' : 'Explore Services'}
+              </a>
+              <a href="/about/our-story" className={`px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 ${isDarkMode ? 'border-zinc-700 hover:border-zinc-500 bg-zinc-900/50' : 'border-gray-200 hover:border-gray-400 bg-white/50'}`}>
+                {lang === 'KOR' ? 'HICE에 대하여' : 'About HICE'}
+              </a>
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Stats Section with Framer Motion Layout */}
+        <section className={`py-16 md:py-24 border-y mt-20 ${isDarkMode ? 'border-zinc-800 bg-zinc-950/50' : 'border-gray-100 bg-white/50'}`}>
+          <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={staggerContainer}
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-x-0 md:divide-x divide-y md:divide-y-0 divide-gray-200 dark:divide-zinc-800"
+            >
+              {t.stats.map((stat, idx) => (
+                <motion.div key={idx} variants={fadeIn} className={`flex flex-col items-center text-center ${idx % 2 !== 0 ? 'border-l border-gray-200 dark:border-zinc-800 md:border-l-0' : ''} ${idx > 1 ? 'pt-8 border-t border-gray-200 dark:border-zinc-800 md:pt-0 md:border-t-0' : ''} p-4`}>
+                  <div className={`p-4 rounded-2xl mb-4 ${isDarkMode ? 'bg-zinc-900 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
+                    <stat.icon size={28} />
                   </div>
+                  <h4 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tighter">{stat.num}</h4>
+                  <p className={`text-sm font-bold uppercase tracking-widest ${isDarkMode ? 'text-zinc-500' : 'text-gray-400'}`}>{stat.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Featured Projects / Cards Section */}
+        <section id="services" className="max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-32">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeIn}
+            className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6"
+          >
+            <div>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">{t.techTitle}</h2>
+              <p className={`text-xl ${isDarkMode ? 'text-zinc-400' : 'text-gray-500'}`}>
+                {lang === 'KOR' ? '세상을 바꾸는 혁신적인 서비스와 연구 결과를 확인하세요.' : 'Discover our innovative services and research that are changing the world.'}
+              </p>
+            </div>
+            <a href="/tech/service/openapp" className="flex items-center gap-2 font-bold text-blue-500 hover:text-blue-600 group">
+              {lang === 'KOR' ? '모든 프로젝트 보기' : 'View All Projects'}
+              <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+            </a>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"
+          >
+            {/* Card 1: HICE AI */}
+            <motion.a variants={fadeIn} href="/tech/research/ai" className={`group p-8 md:p-12 rounded-[2rem] border transition-all duration-300 block ${cardBgClass}`}>
+              <div className="flex justify-between items-start mb-24">
+                <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400">Research</span>
+                <ArrowRight className={`opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2 group-hover:-translate-y-2 ${isDarkMode ? 'group-hover:text-white' : 'group-hover:text-black'}`} size={28} />
+              </div>
+              <h4 className="text-3xl md:text-4xl font-extrabold mb-4 transition-colors group-hover:text-blue-500">HICE AI</h4>
+              <p className={`text-lg md:text-xl font-medium leading-relaxed ${isDarkMode ? 'text-zinc-400' : 'text-gray-500'}`}>
+                {lang === 'KOR' ? '미래를 앞당기는 인공지능 기반 모델 연구 및 고도화' : 'Researching and developing forward-looking AI models'}
+              </p>
+            </motion.a>
+
+            {/* Card 2: Croffle */}
+            <motion.a variants={fadeIn} href="/tech/service/croffle" className={`group p-8 md:p-12 rounded-[2rem] border transition-all duration-300 block ${cardBgClass}`}>
+              <div className="flex justify-between items-start mb-24">
+                <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400">Service</span>
+                <ArrowRight className={`opacity-50 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2 group-hover:-translate-y-2 ${isDarkMode ? 'group-hover:text-white' : 'group-hover:text-black'}`} size={28} />
+              </div>
+              <h4 className="text-3xl md:text-4xl font-extrabold mb-4 transition-colors group-hover:text-green-500">Croffle</h4>
+              <p className={`text-lg md:text-xl font-medium leading-relaxed ${isDarkMode ? 'text-zinc-400' : 'text-gray-500'}`}>
+                {lang === 'KOR' ? '사생활 침해 걱정 없이, 가장 안전하게 소통할 수 있는 보안 메신저' : 'The most secure messenger for communication without privacy concerns'}
+              </p>
+            </motion.a>
+
+            {/* Card 3: Planet & OpenApp (Takes full width on large screens) */}
+            <motion.a variants={fadeIn} href="/tech/service/openapp" className={`group p-8 md:p-12 rounded-[2rem] border transition-all duration-300 block md:col-span-2 ${cardBgClass} overflow-hidden relative`}>
+              <div className="relative z-10 flex flex-col md:flex-row justify-between h-full">
+                <div className="md:w-1/2">
+                  <div className="flex items-start mb-16 md:mb-32">
+                    <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400">Platform</span>
+                  </div>
+                  <h4 className="text-3xl md:text-5xl font-extrabold mb-4 transition-colors group-hover:text-purple-500">HICE OpenApp & Planet</h4>
+                  <p className={`text-lg md:text-xl font-medium leading-relaxed ${isDarkMode ? 'text-zinc-400' : 'text-gray-500'}`}>
+                    {lang === 'KOR' ? '누구나 쉽게 접근하고 확장할 수 있는 범용 애플리케이션 생태계. 한 번의 개발로 모든 플랫폼을 아우릅니다.' : 'A universal application ecosystem that anyone can easily access and expand. Cover all platforms with a single build.'}
+                  </p>
+                </div>
+                <div className="hidden md:flex items-end justify-end w-1/2">
+                  <ArrowRight className={`opacity-50 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-4 group-hover:-translate-y-4 ${isDarkMode ? 'group-hover:text-white' : 'group-hover:text-black'}`} size={64} strokeWidth={1} />
                 </div>
               </div>
-            )}
-          </nav>
 
-          <div className="flex gap-2 items-center">
-            <button onClick={() => setIsSearchOpen(true)} className={`p-2 rounded-full transition-all ${isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-100'}`}>
-              <Search size={22} />
-            </button>
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full hover:opacity-60 transition-all">
-              {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
-            </button>
-            <button onClick={() => setLang(lang === 'KOR' ? 'ENG' : 'KOR')} className="flex items-center gap-2 px-3 py-2 rounded-full hover:opacity-60">
-              <Globe size={18} /><span className="text-xs font-bold">{lang}</span>
-            </button>
+              <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-gradient-to-tr from-purple-500/20 to-blue-500/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 ease-out z-0"></div>
+            </motion.a>
+          </motion.div>
+        </section>
+
+        {/* CTA Section */}
+        <section className={`py-24 md:py-32 relative overflow-hidden ${isDarkMode ? 'bg-zinc-900' : 'bg-gray-50'}`}>
+          <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+          <div className="max-w-4xl mx-auto px-6 md:px-12 text-center relative z-10">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-8"
+            >
+              {lang === 'KOR' ? '세상을 바꾸는 여정에 함께하세요' : 'Join the journey to change the world'}
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className={`text-xl mb-12 ${isDarkMode ? 'text-zinc-400' : 'text-gray-500'}`}
+            >
+              {lang === 'KOR' ? 'HICE는 혁신을 현실로 만들 뛰어난 인재를 기다리고 있습니다.' : 'HICE is waiting for exceptional talent to turn innovation into reality.'}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <a href="/business/careers/roles" className="inline-flex items-center gap-3 px-8 py-5 rounded-full font-bold text-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-xl shadow-blue-500/20">
+                {lang === 'KOR' ? '진행 중인 채용 공고 보기' : 'View Open Roles'}
+                <Target size={20} />
+              </a>
+            </motion.div>
           </div>
-        </div>
-      </header>
+        </section>
 
-      {isSearchOpen && (
-        <div className={`fixed inset-0 z-[100] flex flex-col items-center animate-in fade-in duration-300 ${isDarkMode ? 'bg-black/95 text-white' : 'bg-white/95 text-black'} backdrop-blur-md`}>
-          <div className="w-full flex justify-between items-center px-12 py-6 max-w-7xl">
-            <h2 className="font-bold text-2xl tracking-tighter">HICE</h2>
-            <button onClick={() => setIsSearchOpen(false)} className="p-2 hover:opacity-50 transition-opacity">
-              <X size={32} strokeWidth={1.5} />
-            </button>
-          </div>
+      </main>
 
-          <div className="flex-1 flex flex-col items-center justify-top w-full max-w-4xl px-6 -mt-2">
-            <div className={`relative w-full flex items-center px-7 py-3.5 rounded-full border-2 transition-all ${isDarkMode ? 'bg-zinc-900 border-zinc-700 focus-within:border-white' : 'bg-gray-50 border-gray-200 focus-within:border-black shadow-sm'}`}>
-              <Search size={22} className="text-gray-400 mr-4" />
-              <input
-                autoFocus
-                type="text"
-                placeholder={t.searchPlaceholder}
-                className="w-full bg-transparent text-xl font-bold outline-none placeholder:text-gray-300 dark:placeholder:text-zinc-600"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      
-    </>
+      <Footer isDarkMode={isDarkMode} />
+    </div>
   );
 }
